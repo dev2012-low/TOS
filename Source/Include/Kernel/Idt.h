@@ -1,0 +1,35 @@
+#pragma once
+
+#include <Kernel/Types.h>
+
+#define IDT_ENTRIES 256
+
+#define TIMER 32
+#define KEYBOARD 33
+#define SATA_IRQ 34
+#define HDA_IRQ  35
+#define NVME_IRQ 36
+#define MOUSE    37
+#define ACPI_SCI 38
+
+#include <Kernel/Syscall.h>
+#define IDT_GATE_INT 0x8E
+#define IDT_GATE_SYSCALL 0xEE
+
+struct ATTRIBUTE(packed) IdtEntry {
+    UINT16 OffsetLow;
+    UINT16 Selector;
+    UINT8 Ist;
+    UINT8 TypeAttr;
+    UINT16 OffsetMid;
+    UINT32 OffsetHigh;
+    UINT32 Zero;
+};
+
+struct ATTRIBUTE(packed) IdtPtr {
+    UINT16 Limit;
+    UINT64 Base;
+};
+
+void IdtSetGate(UINT8 Num, NOPTR (*Handler)(), UINT16 Sel, UINT8 Flags, UINT8 Ist);
+void IdtInit(NOPTR);
